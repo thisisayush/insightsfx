@@ -1,0 +1,104 @@
+{% load index %}
+<style>
+    .tw-80 {
+        width: 80%;
+        max-width: 80%;
+    }
+    .table-wrap {
+        word-break: break-word;
+        overflow: hidden;
+        white-space: normal;
+    }
+</style>
+<div class="table-responsive">
+        <table class="table table-hover table-outline text-nowrap card-table">
+            <thead>
+                <tr>
+                    {% for field in tableData.fields %}
+                    <th class="{{ field.class }}">{% if field.label != "..." %}{{ field.label }}{% endif %}</th>
+                    {% endfor %}
+                    <th class="w-1"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tableData.rows|length == 0 %}
+                <tr>
+                    <td colspan="{{ tableData.fields|length|add:"1" }}" class="text-center text-secondary">No Entries Found</td>
+                </tr>
+                {% endif %}
+                {% for row in tableData.rows %}
+                <tr data-id="{{ row.id }}" id="row-{{ row.id }}">
+                    {% for data in row.data %}
+                    <td class="{% get_key_from_list tableData.fields forloop.counter0 'class' %}">
+                        {% if data.type == "progress-meter" %}
+                            <div class="clearfix">
+                                <div class="float-left">
+                                    <strong>{{ data.meta.percent }}%</strong>
+                                </div>
+                                {% if data.subtext %}
+                                <div class="float-right">
+                                    <small class="text-muted">
+                                        {{ data.subtext }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="progress progress-xs">
+                                <div class="progress-bar {% if data.meta.percent < 40 %}bg-red{% elif data.meta.percent < 70 %}bg-yellow{% else %}bg-green{% endif %}" role="progressbar" style="width:{{ data.meta.percent }}%" aria-valuenow="{{ data.meta.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        {% elif data.type == "text" %}
+                            <div>{{ data.text }}</div>
+                            {% if data.subtext %}
+                                <div class="small text-muted">{{ data.subtext }}</div>
+                            {% endif %}
+                        {% elif data.type == "comma-seperated-list" %}
+                            <div>
+                            {% for item in data.text %}
+                                {{ item }}{% if not forloop.last %} ,{% endif %}
+                            {% endfor %}
+                            </div>
+                        {% elif data.type == "link" %}
+                            <div><a href="{{ data.text }}">{{ data.text|truncatechars:20 }}</a></div>
+                            {% if data.subtext %}
+                                <div class="small text-muted">{{ data.subtext }}</div>
+                            {% endif %}
+                        {% elif data.type == "currency" %}
+                            <div><i class="fa fa-rupee" style="font-size: 0.85em;"></i> {{ data.text }}</div>
+                        {% if data.subtext %}
+                            <div class="small text-muted">{{ data.subtext }}</div>
+                        {% endif %}
+                        {% elif data.type == "text-inverted" %}
+                            {% if data.subtext %}
+                                <div class="small text-muted">{{ data.subtext }}</div>
+                            {% endif %}
+                            <div>{{ data.text }}</div>
+                        {% elif data.type == "text-secondary" %}
+                            <span class="text-muted">{{ data.text }}</span>
+                        {% elif data.type == "avatar" %}
+                            <div class="avatar d-block" style="background-image: url('{{ data.meta.url }}')">
+                                {% if data.meta.status %}
+                                <span class="avatar-status {% if data.meta.status == '1' %}bg-green{% else %}bg-red{% endif %}"></span>
+                                {% endif %}
+                            </div>
+                        {% elif data.type == "icon" %}
+                            <i class="{{ data.meta.iconclass }}"></i>
+                        {% elif data.type == "boolean-indicator" %}
+                            {% if data.text == True %}
+                            <i class="fa fa-circle text-success"></i>
+                            {% else %}
+                            <i class="fa fa-circle text-danger"></i>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                    <td class="action-buttons text-right">
+                        {% for action in row.actions %}
+                        <a href="{{ action.url }}?next={{ request.path }}" class="btn btn-sm {{ action.btn_class }}">{{ action.label }}</a>
+                        {% endfor %}
+                        {% comment %} <a href="{% url 'dashboard:edit-user' user.id %}" class="btn btn-secondary btn-sm">Edit</a> {% endcomment %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>

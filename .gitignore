@@ -1,0 +1,8 @@
+venv/
+venveb/
+__pycache__/
+.vscode/
+.env
+uploads/
+temp/
+staticfiles/

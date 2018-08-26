@@ -1,0 +1,12 @@
+{% extends '_base.html' %}
+{% block title %}{% endblock %}
+
+{% block page %}
+      {% include "preloader.html" %}
+      <div class="page-main">
+        {% include "dashboard/components/_header.html" %}
+        {% block content %}
+        {% endblock %}
+      </div>
+      {% include "dashboard/components/_footer.html" %}
+{% endblock %}

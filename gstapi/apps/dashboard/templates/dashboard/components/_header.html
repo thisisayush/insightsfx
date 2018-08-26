@@ -1,0 +1,116 @@
+{% load static %}
+<div class="header py-4">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <a class="header-brand" href="{% url 'dashboard:home' %}">
+                <img src="{% static 'assets/images/logo-horizon-mod-md.png' %}" class="header-brand-img" alt="logo">
+            </a>
+            <div class="d-flex order-lg-2 ml-auto">
+                <div class="nav-item d-none d-md-flex">
+                    <a href="mailto:{{ meta.support_email }}" class="btn btn-sm btn-outline-primary">Contact Support</a>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
+                        <span class="avatar" style="background-image: url('{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'assets/images/avatar.png' %}{% endif %}')"></span>
+                        <span class="ml-2 d-none d-lg-block">
+                            <span class="text-default">{{ user.get_full_name|default:'Howdy!' }}</span>
+                            <small class="text-muted d-block mt-1">
+                                {% if user_roles %}
+                                    {% for role in user_roles %}{{ role|capfirst }}{% if not forloop.last %},{% endif %} {% endfor %}
+                                {% else %}
+                                    Visitor
+                                {% endif %}
+                            </small>
+                        </span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                        <a class="dropdown-item" href="{% url 'dashboard:profile' %}">
+                            <i class="dropdown-icon fe fe-user"></i> Profile
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="mailto:support@afterbooks.in">
+                            <i class="dropdown-icon fe fe-help-circle"></i> Need help?
+                        </a>
+                        <a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                            <i class="dropdown-icon fe fe-log-out"></i> Sign out
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
+                <span class="header-toggler-icon"></span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg order-lg-first">
+                <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard:home' %}" class="nav-link">
+                                <i class="fe fe-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown">
+                                <i class="fe fe-box"></i> Forms
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-arrow">
+                                <a href="{% url 'dashboard:forms:list-forms-free' %}" class="dropdown-item ">
+                                    Free Forms
+                                </a>
+                                <a href="{% url 'dashboard:forms:list-forms-paid' %}" class="dropdown-item ">
+                                    Paid Forms
+                                </a>
+                                <a href="{% url 'dashboard:forms:list-forms-my' %}" class="dropdown-item ">
+                                    My Forms
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard:list-transactions' %}" class="nav-link">
+                                <i class="fa fa-bank"></i> Transactions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard:list-subscriptions' %}" class="nav-link">
+                                <i class="fa fa-edit"></i> Subscriptions
+                            </a>
+                        </li>
+                        {% if user_roles %}
+                            {% if "admin" in user_roles|lower %}
+                            <li class="nav-item dropdown">
+                                <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown">
+                                    <i class="fe fe-calendar"></i> Forms Manager</a>
+                                <div class="dropdown-menu dropdown-menu-arrow">
+                                    <a href="{% url 'dashboard:forms:list-forms' %}" class="dropdown-item ">Browse</a>
+                                    <a href="{% url 'dashboard:forms:add' %}" class="dropdown-item ">Add</a>
+                                    <a class="dropdown-item-text pl-3"><strong>Category Manager</strong><a>
+                                    <a href="{% url 'dashboard:forms:list-category' %}" class="dropdown-item ">Browse</a>
+                                    <a href="{% url 'dashboard:forms:category-add' %}" class="dropdown-item ">Add</a>
+                                    
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'dashboard:list-users' %}" class="nav-link">
+                                    <i class="fe fe-user"></i> Users
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'dashboard:site-management' %}" class="nav-link">
+                                    <i class="fe fe-settings"></i> Settings
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

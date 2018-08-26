@@ -1,0 +1,138 @@
+{% load static %}
+<style>
+    .absolute-center {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+    }
+    #preloader .logo-med {
+        width: 220px;
+        height: auto;
+    }
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9999;
+        overflow: hidden;
+    }
+
+    #preloader .background-wrapper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+    #preloader .wrapper{
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    #preloader .background-wrapper .bg-left,
+    #preloader .background-wrapper .bg-right {
+        width: 50%;
+        height: 100%;
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        animation: gradientBg 5s linear infinite alternate;
+        transition: 0.5s all;
+    }
+
+    #preloader .background-wrapper .bg-left {
+        float: left;
+        left: 0;
+    }
+
+    #preloader .background-wrapper .bg-right {
+        float: right;
+        right: 0;
+    }
+
+    #preloader .content {
+        height: 100px;
+        width: 220px;
+    }
+
+    #preloader .loader-progress {
+        width: 100%;
+        height: 5px;
+        margin-top: 5px;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 5px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #preloader .loader-bar {
+        position: absolute;
+        height: inherit;
+        width: 0%;
+        background-color: #fefefe;
+        border-radius: inherit;
+        animation: ltr 4s linear 0s infinite;
+    }
+    @keyframes gradientBg{
+        from{
+            background-color: #FF9933;
+        }
+        to{
+            background-color: #a21c2e;
+        }
+    }
+    @keyframes ltr {
+        0% {
+            width: 5%;
+            left: -1%;
+        }
+        25%{
+            width: 40%;
+        }
+        50%{
+            width: 5%;
+            left: 95%;
+        }
+        75% {
+            width: 40%;
+        }
+        100% {
+            width: 5%;
+            left: -1%;
+        }
+    }
+</style>
+<div id="preloader">
+    <div class="background-wrapper">
+        <div class="bg-left">
+        </div>
+        <div class="bg-right">
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="absolute-center text-center content">
+            <img class="logo-med" src="{% static 'assets/images/logo-horizon-mod-white-md.png' %}" />
+            <div class="loader-progress">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    require(['jquery'], function($){
+        setTimeout(function () {
+            $("#preloader .content").fadeOut(500);
+            setTimeout(function () {
+                $("#preloader .bg-left, #preloader .bg-right").css("width", "0");
+                setTimeout(function () {
+                    $("#preloader").hide();
+                }, 800);
+            }, 1000);
+        }, 1000);
+    });
+</script>
