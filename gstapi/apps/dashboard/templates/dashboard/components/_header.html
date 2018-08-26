@@ -56,46 +56,8 @@
                                 <i class="fe fe-home"></i> Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown">
-                                <i class="fe fe-box"></i> Forms
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-arrow">
-                                <a href="{% url 'dashboard:forms:list-forms-free' %}" class="dropdown-item ">
-                                    Free Forms
-                                </a>
-                                <a href="{% url 'dashboard:forms:list-forms-paid' %}" class="dropdown-item ">
-                                    Paid Forms
-                                </a>
-                                <a href="{% url 'dashboard:forms:list-forms-my' %}" class="dropdown-item ">
-                                    My Forms
-                                </a>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'dashboard:list-transactions' %}" class="nav-link">
-                                <i class="fa fa-bank"></i> Transactions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'dashboard:list-subscriptions' %}" class="nav-link">
-                                <i class="fa fa-edit"></i> Subscriptions
-                            </a>
-                        </li>
                         {% if user_roles %}
                             {% if "admin" in user_roles|lower %}
-                            <li class="nav-item dropdown">
-                                <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown">
-                                    <i class="fe fe-calendar"></i> Forms Manager</a>
-                                <div class="dropdown-menu dropdown-menu-arrow">
-                                    <a href="{% url 'dashboard:forms:list-forms' %}" class="dropdown-item ">Browse</a>
-                                    <a href="{% url 'dashboard:forms:add' %}" class="dropdown-item ">Add</a>
-                                    <a class="dropdown-item-text pl-3"><strong>Category Manager</strong><a>
-                                    <a href="{% url 'dashboard:forms:list-category' %}" class="dropdown-item ">Browse</a>
-                                    <a href="{% url 'dashboard:forms:category-add' %}" class="dropdown-item ">Add</a>
-                                    
-                                </div>
-                            </li>
                             <li class="nav-item">
                                 <a href="{% url 'dashboard:list-users' %}" class="nav-link">
                                     <i class="fe fe-user"></i> Users

@@ -21,15 +21,6 @@
             </div>
             <div class="col-6 col-sm-3">
               <div class="card">
-                <a href="{% url 'dashboard:forms:list-forms' %}" class="btn btn-dark" style="font-size: 1.2em;">
-                <div class="card-body p-3 text-center">
-                  <span class="fe fe-book"></span> Forms
-                </div>
-                </a>
-              </div>
-            </div>
-            <div class="col-6 col-sm-3">
-              <div class="card">
                 <a href="#" class="btn btn-dark" style="font-size: 1.2em;">
                 <div class="card-body p-3 text-center">
                   <span class="fe fe-server"></span> Settings
@@ -58,54 +49,6 @@
                 <div class="card-body p-3 text-center">
                   <div class="h1 m-0">{{ data.count.users|default:"Error" }}</div>
                   <div class="text-muted mb-4">Registered Users</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.forms|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Forms</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.subscriptions|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Total Subscriptions</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.active_subscriptions|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Active Subscriptions</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.paid_subscriptions|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Paid Subscriptions</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.custom_subscriptions|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Custom Subscriptions</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.transactions|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Transactions</div>
                 </div>
               </div>
             </div>
