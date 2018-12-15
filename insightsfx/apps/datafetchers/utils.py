@@ -1,5 +1,6 @@
 import requests
 import dateparser
+import pytz
 from django.conf import settings
 from psycopg2 import IntegrityError
 
@@ -92,4 +93,6 @@ class GovernmentExtractor(Extractor):
 
             data_time = dateparser.parse(x['last_update'])
 
-            self.store(s, data_time, pm25, pm10)
+            tz_time = pytz.timezone("Asia/Kolkata").localize(data_time)
+
+            self.store(s, tz_time, pm25, pm10)
