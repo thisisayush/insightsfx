@@ -37,7 +37,7 @@ class CompareScheduler:
         self.set_status(CompareCache.PROCESSING)
         
         # Start Processing
-        reader.start_processing()
+        reader.process()
 
     def can_process(self):
         if self.obj.status not in [CompareCache.COMPLETED, CompareCache.PROCESSING]:
