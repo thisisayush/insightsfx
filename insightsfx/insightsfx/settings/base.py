@@ -165,6 +165,6 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_BEAT_SCHEDULE = {
     'auto_update_apis': {
         'task': 'apps.datafetchers.tasks.RunAllFetchers',
-        'schdeule': crontab(minute=0, hour='*/1')
+        'schedule': crontab(minute=0, hour='*/1')
     }
 }
