@@ -9,6 +9,6 @@ def RunAllFetchers(self):
         t = CompareCache.objects.create(
             extractor = "government"
         )
-        CompareScheduler(t.id).start()
+        CompareScheduler(t).start()
     except Exception as e:
         raise self.retry(exc=e, max_retried=3)
