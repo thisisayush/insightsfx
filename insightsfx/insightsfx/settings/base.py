@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import environ
+from celery.schdeule import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -158,3 +159,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "..", "uploads")
 MEDIA_URL = '/uploads/'
 
 DATA_GOV_API_KEY = env('DATA_GOV_API_KEY')
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_BEAT_SCHEDULE = {
+    'auto_update_apis': {
+        'task': 'apps.datafetchers.tasks.RunAllFetchers',
+        'schdeule': crontab(minute=0, hour='*/1')
+    }
+}
