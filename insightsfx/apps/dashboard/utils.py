@@ -153,7 +153,7 @@ def getTableDataForUsers(enabled_columns = None, search=None, sort_by = None, so
 def GetTableData(user):
 
     t = TableData()
-    data=PollutionData.objects.all().order_by('-source_time', 'station')
+    data=PollutionData.objects.all().order_by('-id')
 
     t.addField('id', 'ID')
     t.addField('sation', 'Station')
