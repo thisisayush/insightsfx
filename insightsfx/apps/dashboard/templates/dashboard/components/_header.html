@@ -50,30 +50,28 @@
         <div class="row align-items-center">
             <div class="col-lg order-lg-first">
                 <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
-                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard:home' %}" class="nav-link">
+                            <i class="fe fe-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                            <a href="{% url 'dashboard:list-data' %}" class="nav-link">
+                                <i class="fe fe-list"></i> List Data
+                            </a>
+                        </li>
+                    {% if user_roles %}
+                        {% if "admin" in user_roles|lower %}
                         <li class="nav-item">
-                            <a href="{% url 'dashboard:home' %}" class="nav-link">
-                                <i class="fe fe-home"></i> Home
+                            <a href="{% url 'dashboard:list-users' %}" class="nav-link">
+                                <i class="fe fe-user"></i> Users
                             </a>
                         </li>
                         <li class="nav-item">
-                                <a href="{% url 'dashboard:list-data' %}" class="nav-link">
-                                    <i class="fe fe-list"></i> List Data
-                                </a>
-                            </li>
-                        {% if user_roles %}
-                            {% if "admin" in user_roles|lower %}
-                            <li class="nav-item">
-                                <a href="{% url 'dashboard:list-users' %}" class="nav-link">
-                                    <i class="fe fe-user"></i> Users
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'dashboard:site-management' %}" class="nav-link">
-                                    <i class="fe fe-settings"></i> Settings
-                                </a>
-                            </li>
-                            {% endif %}
+                            <a href="{% url 'dashboard:site-management' %}" class="nav-link">
+                                <i class="fe fe-settings"></i> Settings
+                            </a>
+                        </li>
                         {% endif %}
                     {% endif %}
                 </ul>

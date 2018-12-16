@@ -19,7 +19,7 @@ from .utils import getTableDataForUsers, GetTableData
 
 from apps.datafetchers.models import CompareCache
 
-@login_required
+# @login_required
 def IndexView(request):
     if has_role(request.user, Admin):
         context = {
@@ -28,13 +28,13 @@ def IndexView(request):
             }
         }
         return render(request, "dashboard/index.html", {"data": context, "map_api_key": settings.MAPMYINDIA_API_KEY})
-    elif has_role(request.user, Subscriber):
+    else:
         context = {
             "map_api_key": settings.MAPMYINDIA_API_KEY
         }
-        return render(request, "dashboard/index-subscriber.html", context)
-    else:
-        raise PermissionDenied("You are not allowed to access this page!")
+        return render(request, "dashboard/index.html", context)
+    # else:
+    #     raise PermissionDenied("You are not allowed to access this page!")
 
 @login_required
 def BrowseUsersView(request):
@@ -127,7 +127,7 @@ def ManageSiteView(request):
         raise PermissionDenied(
             "You do not have permissions to access this page!")
 
-@login_required
+# @login_required
 def ListData(request):
     
     tabledata = GetTableData(user=request.user)
