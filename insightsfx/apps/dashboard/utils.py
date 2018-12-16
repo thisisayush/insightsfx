@@ -2,7 +2,9 @@ from django.shortcuts import reverse
 from django.db.models.fields.reverse_related import ManyToOneRel
 from apps.accounts.models import User
 from apps.core.constants import database_keys as dk
-
+from apps.pollutionmodels.models import PollutionData
+from rolepermissions.checkers import has_role
+from apps.accounts.roles import Admin
 class TableData:
 
     fields = []
@@ -146,4 +148,28 @@ def getTableDataForUsers(enabled_columns = None, search=None, sort_by = None, so
 
         counter += 1
 
+    return t.getObject()
+
+def GetTableData(user):
+
+    t = TableData()
+    data=PollutionData.objects.filter()
+    print(data)
+    t.addField('id', 'ID')
+    t.addField('pm2.5', 'Pm 2.5')
+    t.addField('pm10', 'Pm 10')
+    t.addField('source', 'Source Time')
+    t.addField('sation', 'Station')
+    
+    count = 0
+    for e in data:
+        t.addRow(e.id)
+        t.addCellToRow(count, 'text', e.id)
+        t.addCellToRow(count, 'text', e.pm25)
+        t.addCellToRow(count, 'text', e.pm10)
+        t.addCellToRow(count, 'text', e.source_time)
+        t.addCellToRow(count, 'text', e.station)
+        
+        count += 1
+        
     return t.getObject()

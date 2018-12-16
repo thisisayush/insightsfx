@@ -56,6 +56,11 @@
                                 <i class="fe fe-home"></i> Home
                             </a>
                         </li>
+                        <li class="nav-item">
+                                <a href="{% url 'dashboard:list-data' %}" class="nav-link">
+                                    <i class="fe fe-list"></i> List Data
+                                </a>
+                            </li>
                         {% if user_roles %}
                             {% if "admin" in user_roles|lower %}
                             <li class="nav-item">

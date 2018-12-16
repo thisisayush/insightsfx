@@ -15,8 +15,9 @@ from apps.core.constants import permissions as p
 from apps.core.utils import getOption, getOptions, setOption
 
 from .forms import OptionsForm, PasswordChangeForm, RolesForm, UserForm
-from .utils import getTableDataForUsers
+from .utils import getTableDataForUsers, GetTableData
 
+from apps.datafetchers.models import CompareCache
 
 @login_required
 def IndexView(request):
@@ -125,3 +126,10 @@ def ManageSiteView(request):
     else:
         raise PermissionDenied(
             "You do not have permissions to access this page!")
+
+@login_required
+def ListData(request):
+    
+    tabledata = GetTableData(user=request.user)
+    print('s1')
+    return render(request, 'dashboard/list-single.html', {'tableData': tabledata, 'title': "Data"})
