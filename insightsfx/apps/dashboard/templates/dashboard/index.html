@@ -1,58 +1,909 @@
 {% extends "dashboard/_base.html" %}
 
 {% block title %}Home | Dashboard{% endblock %}
+
 {% block content %}
-    <div class="my-3 my-md-5">
-        <div class="container">
-          <div class="page-header">
-            <h1 class="page-title">
-              Quick Access
-            </h1>
+<div class="my-3 my-md-5">
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">
+        Dashboard
+      </h1>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div id="map" style="height:600px;"></div>
+        <script>
+          require(['jquery'], function ($) {
+            $.getScript("https://apis.mapmyindia.com/advancedmaps/v1/{{ map_api_key }}/map_load?v=01.", function () {
+              var map = new MapmyIndia.Map("map", {
+                center: [28.632793883208052, 77.21971929073335],
+                zoomControl: true,
+                hybrid: true
+              });
+
+              function addMarker(position, title, draggable=false) {
+                // position must be instance of L.LatLng that replaces current WGS position of this object. 
+                // define a marker with a default icon and optional parameters draggable and title 
+                var mk = new L.Marker(position, {
+                  draggable: draggable,
+                  title: title
+                });
+                mk.bindPopup(title);
+                //Now let.s add the marker to the Map 
+                map.addLayer(mk);
+                //Although we.ll talk about a few things in the code segment in a moment 
+                //but let.s put it in here so that you have the full picture. 
+                //marker events:
+                mk.on("click", function (e) {
+                  //your code about what you want to do on a marker click 
+                });
+                return mk;
+              }
+
+              function showCircle(marker, lat, lon, radius) {
+                marker.setLatLng([lat, lon]);
+                var fillcolor = "#28b21e";
+                if(radius > 7000)
+                    fillcolor = "#E25A22";
+                else if(radius > 4000)
+                    fillcolor = "#e2e222";
+                currentDiameter = L.circle([lat, lon], {
+                  color: 'rgba(0,0,0,0)',
+                  fillColor: fillcolor,
+                  fillOpacity: 0.5,
+                  radius: radius
+                });
+                currentDiameter.addTo(map);
+                map.fitBounds(currentDiameter.getBounds());
+              }
+              showCircle(addMarker([28.55700844405971, 77.08969116210939], "Rohini"), 28.55700844405971, 77.08969116210939, 4000);
+              showCircle(addMarker([28.536726933221345, 77.27615833282472], "Okhla Phase 2"), 28.536726933221345, 77.27615833282472, 6000);
+              showCircle(addMarker([28.649620345339766, 77.31589794158936], "Anand Vihar"), 28.649620345339766, 77.31589794158936, 7500);
+              showCircle(addMarker([28.638020073917573, 77.16208934783937], "Pusa"), 28.638020073917573, 77.16208934783937, 4000);
+              showCircle(addMarker([28.59009887596912, 77.22671985626222], "Lodhi Road"), 28.59009887596912, 77.22671985626222, 7000);
+              showCircle(addMarker([28.689834723250886, 77.21384525299074], "Lodhi Road"), 28.689834723250886, 77.21384525299074, 9000);
+              showCircle(addMarker([28.622312467797542, 77.08887577056886], "Lodhi Road"), 28.622312467797542, 77.08887577056886, 6000);
+            });
+          });
+        </script>
+      </div>
+    </div>
+    <div class="row row-cards mt-3">
+      <div class="col-lg-6 col-xl-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Pollution Levels (Last 12 hrs)</h3>
           </div>
-          <div class="row row-cards button-cards">
-            <div class="col-6 col-sm-3">
-              <div class="card">
-                <a href="{% url 'dashboard:list-users' %}" class="btn btn-dark" style="font-size: 1.2em;">
-                <div class="card-body p-3 text-center">
-                  <span class="fe fe-user"></span> Users
-                </div>
-                </a>
-              </div>
-            </div>
-            <div class="col-6 col-sm-3">
-              <div class="card">
-                <a href="#" class="btn btn-dark" style="font-size: 1.2em;">
-                <div class="card-body p-3 text-center">
-                  <span class="fe fe-server"></span> Settings
-                </div>
-                </a>
-              </div>
-            </div>
-            <div class="col-6 col-sm-3">
-              <div class="card">
-                <a href="{% url 'accounts:logout' %}" class="btn btn-dark" style="font-size: 1.2em;">
-                <div class="card-body p-3 text-center">
-                  <span class="fe fe-log-out"></span> Logout
-                </div>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="page-header">
-            <h1 class="page-title">
-              Dashboard
-            </h1>
-          </div>
-          <div class="row row-cards align-items-center">
-            <div class="col-6 col-sm-4 col-lg-2">
-              <div class="card">
-                <div class="card-body p-3 text-center">
-                  <div class="h1 m-0">{{ data.count.users|default:"Error" }}</div>
-                  <div class="text-muted mb-4">Registered Users</div>
-                </div>
+          <div class="card-body">
+            <div id="chart-gov-12" style="height: 16rem; max-height: 256px; position: relative;" class="c3"><svg width="326"
+                height="256" style="overflow: hidden;">
+                <defs>
+                  <clipPath id="c3-1544908316726-clip">
+                    <rect width="294" height="222"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-xaxis">
+                    <rect x="-31" y="-20" width="356" height="50"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-yaxis">
+                    <rect x="-29" y="-4" width="50" height="246"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-grid">
+                    <rect width="294" height="222"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-subchart">
+                    <rect width="294"></rect>
+                  </clipPath>
+                </defs>
+                <g transform="translate(30.5,4.5)"><text class="c3-text c3-empty" text-anchor="middle"
+                    dominant-baseline="middle" x="147" y="111" style="opacity: 0;"></text>
+                  <rect class="c3-zoom-rect" width="294" height="222" style="opacity: 0;"></rect>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-regions"
+                    style="visibility: visible;"></g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-grid)" class="c3-grid"
+                    style="visibility: visible;">
+                    <g class="c3-xgrid-focus">
+                      <line class="c3-xgrid-focus" x1="270" x2="270" y1="0" y2="222" style="visibility: hidden;"></line>
+                    </g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-chart">
+                    <g class="c3-event-rects c3-event-rects-single" style="fill-opacity: 0;">
+                      <rect class=" c3-event-rect c3-event-rect-0" x="0" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-1" x="49" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-2" x="98" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-3" x="147" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-4" x="196" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-5" x="245" y="0" width="50" height="222"></rect>
+                    </g>
+                    <g class="c3-chart-bars">
+                      <g class="c3-chart-bar c3-target c3-target-data1" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data1 c3-bars c3-bars-data1" style="cursor: pointer;"></g>
+                      </g>
+                      <g class="c3-chart-bar c3-target c3-target-data2" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data2 c3-bars c3-bars-data2" style="cursor: pointer;"></g>
+                      </g>
+                      <g class="c3-chart-bar c3-target c3-target-data3" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data3 c3-bars c3-bars-data3" style="cursor: pointer;"></g>
+                      </g>
+                    </g>
+                    <g class="c3-chart-lines">
+                      <g class="c3-chart-line c3-target c3-target-data1" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data1 c3-lines c3-lines-data1">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data1" d="M25,203.58333333333334L74,164.1190476190476L123,177.27380952380952L172,170.69642857142856L221,124.65476190476188L270,144.38690476190476"
+                            style="stroke: rgb(253, 150, 68); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data1 c3-areas c3-areas-data1">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data1" d="M 25 203.58333333333334" style="fill: rgb(253, 150, 68); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data1"></g>
+                        <g class=" c3-shapes c3-shapes-data1 c3-circles c3-circles-data1" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="25" cy="203.58333333333334"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="74" cy="164.1190476190476"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="123" cy="177.27380952380952"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="172" cy="170.69642857142856"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="221" cy="124.65476190476188"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="270" cy="144.38690476190476"></circle>
+                        </g>
+                      </g>
+                      <g class="c3-chart-line c3-target c3-target-data2" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data2 c3-lines c3-lines-data2">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data2" d="M25,183.85119047619045L74,118.07738095238093L123,144.38690476190476L172,118.07738095238093L221,78.6130952380952L270,52.303571428571395"
+                            style="stroke: rgb(70, 127, 207); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data2 c3-areas c3-areas-data2">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data2" d="M 25 183.85119047619045" style="fill: rgb(70, 127, 207); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data2"></g>
+                        <g class=" c3-shapes c3-shapes-data2 c3-circles c3-circles-data2" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="25" cy="183.85119047619045"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="74" cy="118.07738095238093"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="123" cy="144.38690476190476"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="172" cy="118.07738095238093"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="221" cy="78.6130952380952"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="270" cy="52.303571428571395"></circle>
+                        </g>
+                      </g>
+                      <g class="c3-chart-line c3-target c3-target-data3" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data3 c3-lines c3-lines-data3">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data3" d="M25,104.92261904761901L74,98.34523809523807L123,78.6130952380952L172,85.19047619047616L221,19.416666666666625L270,25.99404761904758"
+                            style="stroke: rgb(94, 186, 0); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data3 c3-areas c3-areas-data3">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data3" d="M 25 104.92261904761901" style="fill: rgb(94, 186, 0); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data3"></g>
+                        <g class=" c3-shapes c3-shapes-data3 c3-circles c3-circles-data3" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="25" cy="104.92261904761901"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="74" cy="98.34523809523807"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="123" cy="78.6130952380952"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="172" cy="85.19047619047616"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="221" cy="19.416666666666625"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="270" cy="25.99404761904758"></circle>
+                        </g>
+                      </g>
+                    </g>
+                    <g class="c3-chart-arcs" transform="translate(147,106)"><text class="c3-chart-arcs-title" style="text-anchor: middle; opacity: 0;"></text></g>
+                    <g class="c3-chart-texts">
+                      <g class="c3-chart-text c3-target c3-target-data1" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data1"></g>
+                      </g>
+                      <g class="c3-chart-text c3-target c3-target-data2" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data2"></g>
+                      </g>
+                      <g class="c3-chart-text c3-target c3-target-data3" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data3"></g>
+                      </g>
+                    </g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-grid)" class="c3-grid c3-grid-lines">
+                    <g class="c3-xgrid-lines"></g>
+                    <g class="c3-ygrid-lines"></g>
+                  </g>
+                  <g class="c3-axis c3-axis-x" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-xaxis)"
+                    transform="translate(0,222)" style="visibility: visible; opacity: 1;"><text class="c3-axis-x-label"
+                      transform="" style="text-anchor: end;" x="294" dx="-0.5em" dy="-0.5em"></text>
+                    <g class="tick" transform="translate(25, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2013</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(74, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2014</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(123, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2015</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(172, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2016</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(221, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2017</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(270, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="0"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2018</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M0,6V0H294V6"></path>
+                  </g>
+                  <g class="c3-axis c3-axis-y" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-yaxis)"
+                    transform="translate(0,0)" style="visibility: visible; opacity: 1;"><text class="c3-axis-y-label"
+                      transform="rotate(-90)" style="text-anchor: end;" x="0" dx="-0.5em" dy="1.2em"></text>
+                    <g class="tick" transform="translate(0,217)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">0</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,184)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">5</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,151)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">10</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,119)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">15</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,86)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">20</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,53)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">25</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,20)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">30</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M-6,1H0V222H-6"></path>
+                  </g>
+                  <g class="c3-axis c3-axis-y2" transform="translate(294,0)" style="visibility: hidden; opacity: 1;"><text
+                      class="c3-axis-y2-label" transform="rotate(-90)" style="text-anchor: end;" x="0" dx="-0.5em" dy="-0.5em"></text>
+                    <g class="tick" transform="translate(0,222)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,200)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.1</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,178)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.2</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,156)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.3</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,134)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.4</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,112)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.5</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,90)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.6</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,68)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.7</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,46)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.8</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,24)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.9</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,1)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">1</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M6,1H0V222H6"></path>
+                  </g>
+                </g>
+                <g transform="translate(20.5,256.5)" style="visibility: hidden;">
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-subchart)" class="c3-chart">
+                    <g class="c3-chart-bars"></g>
+                    <g class="c3-chart-lines"></g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-brush" style="pointer-events: all; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                    <rect class="background" x="0" width="304" style="visibility: hidden; cursor: crosshair;"></rect>
+                    <rect class="extent" x="0" width="0" style="cursor: move;"></rect>
+                    <g class="resize e" transform="translate(0,0)" style="cursor: ew-resize; display: none;">
+                      <rect x="-3" width="6" height="6" style="visibility: hidden;"></rect>
+                    </g>
+                    <g class="resize w" transform="translate(0,0)" style="cursor: ew-resize; display: none;">
+                      <rect x="-3" width="6" height="6" style="visibility: hidden;"></rect>
+                    </g>
+                  </g>
+                  <g class="c3-axis-x" transform="translate(0,0)" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-xaxis)"
+                    style="visibility: hidden; opacity: 1;">
+                    <g class="tick" transform="translate(25, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2013</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(74, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2014</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(123, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2015</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(172, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2016</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(221, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2017</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(270, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="0"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2018</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M0,6V0H294V6"></path>
+                  </g>
+                </g>
+                <g transform="translate(0,256)" style="visibility: hidden;"></g><text class="c3-title" x="163" y="0"></text>
+              </svg>
+              <div class="c3-tooltip-container" style="position: absolute; pointer-events: none; display: none; top: 51.5px; left: 190.5px;">
+                <table class="c3-tooltip">
+                  <tbody>
+                    <tr>
+                      <th colspan="2">2018</th>
+                    </tr>
+                    <tr class="c3-tooltip-name--data3">
+                      <td class="name"><span style="background-color:#5eba00"></span>Sales</td>
+                      <td class="value">29</td>
+                    </tr>
+                    <tr class="c3-tooltip-name--data2">
+                      <td class="name"><span style="background-color:#467fcf"></span>Marketing</td>
+                      <td class="value">25</td>
+                    </tr>
+                    <tr class="c3-tooltip-name--data1">
+                      <td class="name"><span style="background-color:#fd9644"></span>Development</td>
+                      <td class="value">11</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
+        <script>
+          require(['c3', 'jquery'], function (c3, $) {
+            $(document).ready(function () {
+              var chart = c3.generate({
+                bindto: '#chart-gov-12', // id of chart wrapper
+                data: {
+                  columns: [
+                    // each columns data
+                    ['data1', 149, 152, 150, 130, 170, 169, 160, 172, 156, 250, 300, 280],
+                    ['data2', 56, 60, 75, 80, 70, 63, 80, 120, 100, 95, 105, 131],
+                  ],
+                  type: 'line', // default type of chart
+                  colors: {
+                    'data1': tabler.colors["orange"],
+                    'data2': tabler.colors["blue"],
+                  },
+                  names: {
+                    // name of each serie
+                    'data1': 'PM2.5',
+                    'data2': 'PM10',
+                  }
+                },
+                axis: {
+                  x: {
+                    type: 'category',
+                    // name of each category
+                    categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+                  },
+                },
+                legend: {
+                  show: false, //hide legend
+                },
+                padding: {
+                  bottom: 0,
+                  top: 0
+                },
+              });
+            });
+          });
+        </script>
       </div>
+      <div class="col-lg-6 col-xl-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Pollution Levels (Last 7 Days)</h3>
+          </div>
+          <div class="card-body">
+            <div id="chart-gov-7" style="height: 16rem; max-height: 256px; position: relative;" class="c3"><svg width="326"
+                height="256" style="overflow: hidden;">
+                <defs>
+                  <clipPath id="c3-1544908316726-clip">
+                    <rect width="294" height="222"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-xaxis">
+                    <rect x="-31" y="-20" width="356" height="50"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-yaxis">
+                    <rect x="-29" y="-4" width="50" height="246"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-grid">
+                    <rect width="294" height="222"></rect>
+                  </clipPath>
+                  <clipPath id="c3-1544908316726-clip-subchart">
+                    <rect width="294"></rect>
+                  </clipPath>
+                </defs>
+                <g transform="translate(30.5,4.5)"><text class="c3-text c3-empty" text-anchor="middle"
+                    dominant-baseline="middle" x="147" y="111" style="opacity: 0;"></text>
+                  <rect class="c3-zoom-rect" width="294" height="222" style="opacity: 0;"></rect>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-regions"
+                    style="visibility: visible;"></g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-grid)" class="c3-grid"
+                    style="visibility: visible;">
+                    <g class="c3-xgrid-focus">
+                      <line class="c3-xgrid-focus" x1="270" x2="270" y1="0" y2="222" style="visibility: hidden;"></line>
+                    </g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-chart">
+                    <g class="c3-event-rects c3-event-rects-single" style="fill-opacity: 0;">
+                      <rect class=" c3-event-rect c3-event-rect-0" x="0" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-1" x="49" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-2" x="98" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-3" x="147" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-4" x="196" y="0" width="50" height="222"></rect>
+                      <rect class=" c3-event-rect c3-event-rect-5" x="245" y="0" width="50" height="222"></rect>
+                    </g>
+                    <g class="c3-chart-bars">
+                      <g class="c3-chart-bar c3-target c3-target-data1" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data1 c3-bars c3-bars-data1" style="cursor: pointer;"></g>
+                      </g>
+                      <g class="c3-chart-bar c3-target c3-target-data2" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data2 c3-bars c3-bars-data2" style="cursor: pointer;"></g>
+                      </g>
+                      <g class="c3-chart-bar c3-target c3-target-data3" style="pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data3 c3-bars c3-bars-data3" style="cursor: pointer;"></g>
+                      </g>
+                    </g>
+                    <g class="c3-chart-lines">
+                      <g class="c3-chart-line c3-target c3-target-data1" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data1 c3-lines c3-lines-data1">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data1" d="M25,203.58333333333334L74,164.1190476190476L123,177.27380952380952L172,170.69642857142856L221,124.65476190476188L270,144.38690476190476"
+                            style="stroke: rgb(253, 150, 68); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data1 c3-areas c3-areas-data1">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data1" d="M 25 203.58333333333334" style="fill: rgb(253, 150, 68); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data1"></g>
+                        <g class=" c3-shapes c3-shapes-data1 c3-circles c3-circles-data1" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="25" cy="203.58333333333334"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="74" cy="164.1190476190476"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="123" cy="177.27380952380952"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="172" cy="170.69642857142856"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="221" cy="124.65476190476188"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(253, 150, 68); opacity: 1;"
+                            cx="270" cy="144.38690476190476"></circle>
+                        </g>
+                      </g>
+                      <g class="c3-chart-line c3-target c3-target-data2" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data2 c3-lines c3-lines-data2">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data2" d="M25,183.85119047619045L74,118.07738095238093L123,144.38690476190476L172,118.07738095238093L221,78.6130952380952L270,52.303571428571395"
+                            style="stroke: rgb(70, 127, 207); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data2 c3-areas c3-areas-data2">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data2" d="M 25 183.85119047619045" style="fill: rgb(70, 127, 207); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data2"></g>
+                        <g class=" c3-shapes c3-shapes-data2 c3-circles c3-circles-data2" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="25" cy="183.85119047619045"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="74" cy="118.07738095238093"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="123" cy="144.38690476190476"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="172" cy="118.07738095238093"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="221" cy="78.6130952380952"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(70, 127, 207); opacity: 1;"
+                            cx="270" cy="52.303571428571395"></circle>
+                        </g>
+                      </g>
+                      <g class="c3-chart-line c3-target c3-target-data3" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-shapes c3-shapes-data3 c3-lines c3-lines-data3">
+                          <path class=" c3-shape c3-shape c3-line c3-line-data3" d="M25,104.92261904761901L74,98.34523809523807L123,78.6130952380952L172,85.19047619047616L221,19.416666666666625L270,25.99404761904758"
+                            style="stroke: rgb(94, 186, 0); opacity: 1;"></path>
+                        </g>
+                        <g class=" c3-shapes c3-shapes-data3 c3-areas c3-areas-data3">
+                          <path class=" c3-shape c3-shape c3-area c3-area-data3" d="M 25 104.92261904761901" style="fill: rgb(94, 186, 0); opacity: 0.1;"></path>
+                        </g>
+                        <g class=" c3-selected-circles c3-selected-circles-data3"></g>
+                        <g class=" c3-shapes c3-shapes-data3 c3-circles c3-circles-data3" style="cursor: pointer;">
+                          <circle class="c3-shape c3-shape-0 c3-circle c3-circle-0" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="25" cy="104.92261904761901"></circle>
+                          <circle class=" c3-shape c3-shape-1 c3-circle c3-circle-1" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="74" cy="98.34523809523807"></circle>
+                          <circle class=" c3-shape c3-shape-2 c3-circle c3-circle-2" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="123" cy="78.6130952380952"></circle>
+                          <circle class="c3-shape c3-shape-3 c3-circle c3-circle-3" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="172" cy="85.19047619047616"></circle>
+                          <circle class=" c3-shape c3-shape-4 c3-circle c3-circle-4" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="221" cy="19.416666666666625"></circle>
+                          <circle class="c3-shape c3-shape-5 c3-circle c3-circle-5" r="2.5" style="fill: rgb(94, 186, 0); opacity: 1;"
+                            cx="270" cy="25.99404761904758"></circle>
+                        </g>
+                      </g>
+                    </g>
+                    <g class="c3-chart-arcs" transform="translate(147,106)"><text class="c3-chart-arcs-title" style="text-anchor: middle; opacity: 0;"></text></g>
+                    <g class="c3-chart-texts">
+                      <g class="c3-chart-text c3-target c3-target-data1" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data1"></g>
+                      </g>
+                      <g class="c3-chart-text c3-target c3-target-data2" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data2"></g>
+                      </g>
+                      <g class="c3-chart-text c3-target c3-target-data3" style="opacity: 1; pointer-events: none;">
+                        <g class=" c3-texts c3-texts-data3"></g>
+                      </g>
+                    </g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-grid)" class="c3-grid c3-grid-lines">
+                    <g class="c3-xgrid-lines"></g>
+                    <g class="c3-ygrid-lines"></g>
+                  </g>
+                  <g class="c3-axis c3-axis-x" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-xaxis)"
+                    transform="translate(0,222)" style="visibility: visible; opacity: 1;"><text class="c3-axis-x-label"
+                      transform="" style="text-anchor: end;" x="294" dx="-0.5em" dy="-0.5em"></text>
+                    <g class="tick" transform="translate(25, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2013</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(74, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2014</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(123, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2015</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(172, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2016</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(221, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2017</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(270, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="0"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2018</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M0,6V0H294V6"></path>
+                  </g>
+                  <g class="c3-axis c3-axis-y" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-yaxis)"
+                    transform="translate(0,0)" style="visibility: visible; opacity: 1;"><text class="c3-axis-y-label"
+                      transform="rotate(-90)" style="text-anchor: end;" x="0" dx="-0.5em" dy="1.2em"></text>
+                    <g class="tick" transform="translate(0,217)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">0</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,184)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">5</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,151)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">10</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,119)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">15</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,86)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">20</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,53)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">25</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,20)" style="opacity: 1;">
+                      <line x2="-6"></line><text x="-9" y="0" style="text-anchor: end;">
+                        <tspan x="-9" dy="3">30</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M-6,1H0V222H-6"></path>
+                  </g>
+                  <g class="c3-axis c3-axis-y2" transform="translate(294,0)" style="visibility: hidden; opacity: 1;"><text
+                      class="c3-axis-y2-label" transform="rotate(-90)" style="text-anchor: end;" x="0" dx="-0.5em" dy="-0.5em"></text>
+                    <g class="tick" transform="translate(0,222)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,200)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.1</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,178)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.2</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,156)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.3</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,134)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.4</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,112)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.5</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,90)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.6</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,68)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.7</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,46)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.8</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,24)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">0.9</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(0,1)" style="opacity: 1;">
+                      <line x2="6" y2="0"></line><text x="9" y="0" style="text-anchor: start;">
+                        <tspan x="9" dy="3">1</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M6,1H0V222H6"></path>
+                  </g>
+                </g>
+                <g transform="translate(20.5,256.5)" style="visibility: hidden;">
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-subchart)" class="c3-chart">
+                    <g class="c3-chart-bars"></g>
+                    <g class="c3-chart-lines"></g>
+                  </g>
+                  <g clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip)" class="c3-brush" style="pointer-events: all; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                    <rect class="background" x="0" width="304" style="visibility: hidden; cursor: crosshair;"></rect>
+                    <rect class="extent" x="0" width="0" style="cursor: move;"></rect>
+                    <g class="resize e" transform="translate(0,0)" style="cursor: ew-resize; display: none;">
+                      <rect x="-3" width="6" height="6" style="visibility: hidden;"></rect>
+                    </g>
+                    <g class="resize w" transform="translate(0,0)" style="cursor: ew-resize; display: none;">
+                      <rect x="-3" width="6" height="6" style="visibility: hidden;"></rect>
+                    </g>
+                  </g>
+                  <g class="c3-axis-x" transform="translate(0,0)" clip-path="url(http://preview.tabler.io/charts.html#c3-1544908316726-clip-xaxis)"
+                    style="visibility: hidden; opacity: 1;">
+                    <g class="tick" transform="translate(25, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2013</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(74, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2014</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(123, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2015</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(172, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2016</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(221, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="6"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2017</tspan>
+                      </text>
+                    </g>
+                    <g class="tick" transform="translate(270, 0)" style="opacity: 1;">
+                      <line x1="25" x2="25" y2="0"></line><text x="0" y="9" transform="" style="text-anchor: middle; display: block;">
+                        <tspan x="0" dy=".71em" dx="0">2018</tspan>
+                      </text>
+                    </g>
+                    <path class="domain" d="M0,6V0H294V6"></path>
+                  </g>
+                </g>
+                <g transform="translate(0,256)" style="visibility: hidden;"></g><text class="c3-title" x="163" y="0"></text>
+              </svg>
+              <div class="c3-tooltip-container" style="position: absolute; pointer-events: none; display: none; top: 51.5px; left: 190.5px;">
+                <table class="c3-tooltip">
+                  <tbody>
+                    <tr>
+                      <th colspan="2">2018</th>
+                    </tr>
+                    <tr class="c3-tooltip-name--data3">
+                      <td class="name"><span style="background-color:#5eba00"></span>Sales</td>
+                      <td class="value">29</td>
+                    </tr>
+                    <tr class="c3-tooltip-name--data2">
+                      <td class="name"><span style="background-color:#467fcf"></span>Marketing</td>
+                      <td class="value">25</td>
+                    </tr>
+                    <tr class="c3-tooltip-name--data1">
+                      <td class="name"><span style="background-color:#fd9644"></span>Development</td>
+                      <td class="value">11</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          require(['c3', 'jquery'], function (c3, $) {
+            $(document).ready(function () {
+              var chart = c3.generate({
+                bindto: '#chart-gov-7', // id of chart wrapper
+                data: {
+                  columns: [
+                    // each columns data
+                    ['data1', 150, 130, 170, 160, 172, 156, 200],
+                    ['data2', 100, 75, 80, 120, 95, 105, 131],
+                  ],
+                  type: 'line', // default type of chart
+                  colors: {
+                    'data1': tabler.colors["orange"],
+                    'data2': tabler.colors["blue"],
+                  },
+                  names: {
+                    // name of each serie
+                    'data1': 'PM2.5',
+                    'data2': 'PM10',
+                  }
+                },
+                axis: {
+                  x: {
+                    type: 'category',
+                    // name of each category
+                    categories: ['1', '2', '3', '4', '5', '6', '7']
+                  },
+                },
+                legend: {
+                  show: false, //hide legend
+                },
+                padding: {
+                  bottom: 0,
+                  top: 0
+                },
+              });
+            });
+          });
+        </script>
+      </div>
+      <div class="col-lg-6 col-xl-4">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Top Regions by Pollution Levels</h4>
+          </div>
+          <table class="table card-table">
+            <tbody>
+              <tr>
+                <td>Okhla Phase 2</td>
+                <td class="text-right"><span class="text-muted">344</span></td>
+              </tr>
+              <tr>
+                <td>Narela</td>
+                <td class="text-right"><span class="text-muted">322</span></td>
+              </tr>
+              <tr>
+                <td>Anand Vihar</td>
+                <td class="text-right"><span class="text-muted">321</span></td>
+              </tr>
+              <tr>
+                <td>Pusa</td>
+                <td class="text-right"><span class="text-muted">320</span></td>
+              </tr>
+              <tr>
+                <td>North Campus - DU</td>
+                <td class="text-right"><span class="text-muted">309</span></td>
+              </tr>
+              <tr>
+                <td>Jahangirpuri</td>
+                <td class="text-right"><span class="text-muted">300</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

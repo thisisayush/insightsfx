@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from rolepermissions.checkers import has_permission, has_role
+from django.conf import settings
 from rolepermissions.roles import assign_role, clear_roles, get_user_roles
 
 from apps.accounts import roles as r
@@ -25,9 +26,10 @@ def IndexView(request):
                 "users": User.objects.all().count(),
             }
         }
-        return render(request, "dashboard/index.html", {"data": context})
+        return render(request, "dashboard/index.html", {"data": context, "map_api_key": settings.MAPMYINDIA_API_KEY})
     elif has_role(request.user, Subscriber):
         context = {
+            "map_api_key": settings.MAPMYINDIA_API_KEY
         }
         return render(request, "dashboard/index-subscriber.html", context)
     else:

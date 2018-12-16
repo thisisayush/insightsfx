@@ -159,6 +159,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "..", "uploads")
 MEDIA_URL = '/uploads/'
 
 DATA_GOV_API_KEY = env('DATA_GOV_API_KEY')
+MAPMYINDIA_API_KEY = env('MAPMYINDIA_API_KEY')
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672'
 CELERY_TIMEZONE = 'Asia/Kolkata'
