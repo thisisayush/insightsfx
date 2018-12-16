@@ -153,22 +153,28 @@ def getTableDataForUsers(enabled_columns = None, search=None, sort_by = None, so
 def GetTableData(user):
 
     t = TableData()
-    data=PollutionData.objects.filter()
-    print(data)
+    data=PollutionData.objects.all().order_by('-source_time', 'station')
+
     t.addField('id', 'ID')
+    t.addField('sation', 'Station')
     t.addField('pm2.5', 'Pm 2.5')
     t.addField('pm10', 'Pm 10')
     t.addField('source', 'Source Time')
-    t.addField('sation', 'Station')
+    t.addField('source', 'Source')
+    t.addField('source_type', 'Source Type')
+    t.addField('source', 'Update Time')
     
     count = 0
     for e in data:
         t.addRow(e.id)
         t.addCellToRow(count, 'text', e.id)
+        t.addCellToRow(count, 'text', e.station)
         t.addCellToRow(count, 'text', e.pm25)
         t.addCellToRow(count, 'text', e.pm10)
-        t.addCellToRow(count, 'text', e.source_time)
-        t.addCellToRow(count, 'text', e.station)
+        t.addCellToRow(count, 'text', str(e.source_time))
+        t.addCellToRow(count, 'text', e.source)
+        t.addCellToRow(count, 'text', e.source_type)
+        t.addCellToRow(count, 'text', str(e.created_on))
         
         count += 1
         
